@@ -1,0 +1,46 @@
+{% extends 'inventario/base.html' %}
+{% block title %}Catálogo{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <h1>Catálogo de productos</h1>
+  <p class="muted">Productos disponibles en TechLogix S.A.</p>
+</div>
+
+<form method="get" class="filters">
+  <input type="search" name="q" value="{{ q }}" placeholder="Buscar por nombre…" aria-label="Buscar por nombre">
+  <select name="categoria" aria-label="Filtrar por categoría">
+    <option value="">Todas las categorías</option>
+    {% for c in categorias %}
+      <option value="{{ c.id }}" {% if c.id == categoria_sel %}selected{% endif %}>{{ c.nombre }}</option>
+    {% endfor %}
+  </select>
+  <button type="submit" class="btn btn--primary">Filtrar</button>
+  {% if q or categoria_sel %}<a href="{% url 'catalogo' %}" class="btn btn--ghost">Limpiar</a>{% endif %}
+</form>
+
+<p class="muted count">{{ productos|length }} producto{{ productos|length|pluralize }} encontrado{{ productos|length|pluralize }}</p>
+
+{% if productos %}
+<div class="grid grid--3">
+  {% for p in productos %}
+  <article class="card product">
+    <span class="tag">{{ p.categoria.nombre }}</span>
+    <h3>{{ p.nombre }}</h3>
+    <p class="sku">SKU: {{ p.sku }}</p>
+    <p class="price">${{ p.precio|floatformat:"0g" }}</p>
+    {% if p.stock > 0 %}
+      <span class="badge badge--ok">Disponible · {{ p.stock }} un.</span>
+    {% else %}
+      <span class="badge badge--out">Sin stock</span>
+    {% endif %}
+  </article>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty">
+  <p>No se encontraron productos con esos criterios.</p>
+  <a href="{% url 'catalogo' %}" class="btn btn--outline">Ver todos los productos</a>
+</div>
+{% endif %}
+{% endblock %}

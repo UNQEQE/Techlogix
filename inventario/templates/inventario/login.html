@@ -1,0 +1,35 @@
+{% extends 'inventario/base.html' %}
+{% block title %}Acceso{% endblock %}
+
+{% block content %}
+<div class="auth">
+  <div class="card auth__card">
+    <h1>Acceso a administración</h1>
+    <p class="muted">Ingresa con tu usuario y contraseña de TechLogix S.A.</p>
+
+    {% if form.errors %}
+      <div class="alert alert--error">Usuario o contraseña incorrectos. Inténtalo nuevamente.</div>
+    {% endif %}
+    {% if next and user.is_authenticated %}
+      <div class="alert alert--warning">Tu cuenta no tiene acceso a esa página.</div>
+    {% elif next %}
+      <div class="alert alert--info">Debes iniciar sesión para ver esa sección.</div>
+    {% endif %}
+
+    <form method="post" class="form">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ next }}">
+      <div class="field">
+        <label for="{{ form.username.id_for_label }}">Usuario</label>
+        <input type="text" name="username" id="{{ form.username.id_for_label }}" autocomplete="username" autofocus required>
+      </div>
+      <div class="field">
+        <label for="{{ form.password.id_for_label }}">Contraseña</label>
+        <input type="password" name="password" id="{{ form.password.id_for_label }}" autocomplete="current-password" required>
+      </div>
+      <button type="submit" class="btn btn--primary btn--block">Ingresar</button>
+    </form>
+    <p class="muted small"><a href="{% url 'index' %}">← Volver al inicio</a></p>
+  </div>
+</div>
+{% endblock %}

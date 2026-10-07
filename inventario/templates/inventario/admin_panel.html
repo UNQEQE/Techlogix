@@ -1,0 +1,76 @@
+{% extends 'inventario/base.html' %}
+{% block title %}Administración{% endblock %}
+
+{% block content %}
+<div class="page-head page-head--row">
+  <div>
+    <h1>Administración de inventario</h1>
+    <p class="muted">
+      Perfil:
+      <strong>{% if perms.inventario.add_producto %}Administrador{% else %}Asistente (solo lectura){% endif %}</strong>
+    </p>
+  </div>
+  <div class="actions">
+    {% if perms.inventario.add_producto %}
+      <a href="{% url 'producto_crear' %}" class="btn btn--primary">+ Nuevo producto</a>
+    {% endif %}
+    {% if user.is_staff %}
+      <a href="{% url 'admin:index' %}" class="btn btn--outline">Panel Django</a>
+    {% endif %}
+  </div>
+</div>
+
+{% if not perms.inventario.add_producto %}
+  <div class="alert alert--info">Tu perfil solo permite consultar el inventario. Las acciones de crear, editar y eliminar están deshabilitadas.</div>
+{% endif %}
+
+<form method="get" class="filters">
+  <input type="search" name="q" value="{{ q }}" placeholder="Buscar por nombre o SKU…" aria-label="Buscar">
+  <button type="submit" class="btn btn--primary">Buscar</button>
+  {% if q %}<a href="{% url 'admin_panel' %}" class="btn btn--ghost">Limpiar</a>{% endif %}
+</form>
+
+{% if productos %}
+<div class="table-wrap">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>SKU</th><th>Producto</th><th>Categoría</th>
+        <th class="num">Precio</th><th class="num">Stock</th><th>Ingreso</th><th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in productos %}
+      <tr>
+        <td><code>{{ p.sku }}</code></td>
+        <td>{{ p.nombre }}</td>
+        <td>{{ p.categoria.nombre }}</td>
+        <td class="num">${{ p.precio|floatformat:"0g" }}</td>
+        <td class="num">
+          {% if p.stock > 0 %}{{ p.stock }}{% else %}<span class="badge badge--out">0</span>{% endif %}
+        </td>
+        <td>{{ p.fecha_ingreso|date:"d/m/Y" }}</td>
+        <td class="row-actions">
+          {% if perms.inventario.view_producto %}
+            <a href="{% url 'producto_detalle' p.pk %}" class="btn btn--ghost btn--sm">Ver</a>
+          {% endif %}
+          {% if perms.inventario.change_producto %}
+            <a href="{% url 'producto_editar' p.pk %}" class="btn btn--outline btn--sm">Editar</a>
+          {% endif %}
+          {% if perms.inventario.delete_producto %}
+            <a href="{% url 'producto_eliminar' p.pk %}" class="btn btn--danger btn--sm">Eliminar</a>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+<p class="muted count">{{ productos|length }} registro{{ productos|length|pluralize }}</p>
+{% else %}
+<div class="empty">
+  <p>No hay productos para mostrar.</p>
+  {% if perms.inventario.add_producto %}<a href="{% url 'producto_crear' %}" class="btn btn--primary">Registrar el primero</a>{% endif %}
+</div>
+{% endif %}
+{% endblock %}

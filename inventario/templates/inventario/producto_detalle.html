@@ -1,0 +1,27 @@
+{% extends 'inventario/base.html' %}
+{% block title %}{{ producto.nombre }}{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <a href="{% url 'admin_panel' %}" class="muted small">← Volver al listado</a>
+  <h1>{{ producto.nombre }}</h1>
+</div>
+
+<div class="card detail">
+  <dl>
+    <div><dt>SKU</dt><dd><code>{{ producto.sku }}</code></dd></div>
+    <div><dt>Categoría</dt><dd>{{ producto.categoria.nombre }}</dd></div>
+    <div><dt>Precio</dt><dd>${{ producto.precio|floatformat:"0g" }}</dd></div>
+    <div><dt>Stock</dt><dd>{{ producto.stock }} unidad{{ producto.stock|pluralize:"es" }}</dd></div>
+    <div><dt>Fecha de ingreso</dt><dd>{{ producto.fecha_ingreso|date:"d \d\e F \d\e Y" }}</dd></div>
+  </dl>
+  <div class="actions">
+    {% if perms.inventario.change_producto %}
+      <a href="{% url 'producto_editar' producto.pk %}" class="btn btn--outline">Editar</a>
+    {% endif %}
+    {% if perms.inventario.delete_producto %}
+      <a href="{% url 'producto_eliminar' producto.pk %}" class="btn btn--danger">Eliminar</a>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

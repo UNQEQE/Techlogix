@@ -1,0 +1,51 @@
+{% extends 'inventario/base.html' %}
+{% block title %}Inicio{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <div>
+    <p class="eyebrow">Distribuidora de tecnología</p>
+    <h1>Tecnología confiable para tu empresa, <span>con el inventario siempre al día.</span></h1>
+    <p class="lead">
+      En TechLogix S.A. distribuimos notebooks, monitores, periféricos y equipamiento de redes
+      para empresas e instituciones de la Patagonia. Revisa nuestro catálogo público o ingresa
+      al área restringida para gestionar el inventario.
+    </p>
+    <div class="actions">
+      <a href="{% url 'catalogo' %}" class="btn btn--primary">Ver catálogo</a>
+      <a href="{% url 'login' %}" class="btn btn-primary">Acceder</a>
+    </div>
+  </div>
+  <div class="hero__stats">
+    <div class="stat"><strong>{{ total_productos }}</strong><span>productos en catálogo</span></div>
+    <div class="stat"><strong>{{ total_categorias }}</strong><span>categorías</span></div>
+  </div>
+</section>
+
+<section class="section">
+  <h2>Por qué TechLogix</h2>
+  <div class="grid grid--3">
+    <article class="card"><h3>Inventario centralizado</h3><p>Toda la información de productos y stock en una base de datos relacional PostgreSQL, segura y persistente.</p></article>
+    <article class="card"><h3>Acceso por perfiles</h3><p>Administradores gestionan el catálogo completo; asistentes consultan el inventario en modo solo lectura.</p></article>
+    <article class="card"><h3>Catálogo público</h3><p>Busca por nombre y filtra por categoría sin necesidad de iniciar sesión.</p></article>
+  </div>
+</section>
+
+{% if ultimos %}
+<section class="section">
+  <div class="section__head">
+    <h2>Últimos ingresos</h2>
+    <a href="{% url 'catalogo' %}">Ver todo el catálogo →</a>
+  </div>
+  <div class="grid grid--4">
+    {% for p in ultimos %}
+    <article class="card product">
+      <span class="tag">{{ p.categoria.nombre }}</span>
+      <h3>{{ p.nombre }}</h3>
+      <p class="price">${{ p.precio|floatformat:"0g" }}</p>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,49 @@
+{% load static %}<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}TechLogix S.A.{% endblock %} · TechLogix S.A.</title>
+  <link rel="stylesheet" href="{% static 'inventario/css/style.css' %}">
+</head>
+<body>
+  {% with url_name=request.resolver_match.url_name %}
+  <header class="topbar">
+    <div class="container topbar__inner">
+      <a href="{% url 'index' %}" class="brand"><span class="brand__mark">TL</span> TechLogix <small>S.A.</small></a>
+      <nav class="nav">
+        <a href="{% url 'index' %}" {% if url_name == 'index' %}class="active"{% endif %}>Inicio</a>
+        <a href="{% url 'catalogo' %}" {% if url_name == 'catalogo' %}class="active"{% endif %}>Catálogo</a>
+        {% if user.is_authenticated %}
+          <a href="{% url 'admin_panel' %}" {% if 'producto' in url_name or url_name == 'admin_panel' %}class="active"{% endif %}>Administración</a>
+          <span class="userchip">
+            {{ user.username }}
+          </span>
+          <form method="post" action="{% url 'logout' %}" class="inline">
+            {% csrf_token %}
+            <button type="submit" class="btn btn--ghost btn--sm">Salir</button>
+          </form>
+        {% else %}
+          <a href="{% url 'login' %}" class="btn btn--primary btn--sm">Acceder</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+  {% endwith %}
+
+  <main class="container main">
+    {% if messages %}
+      <div class="messages">
+        {% for message in messages %}
+          <div class="alert alert--{{ message.tags|default:'info' }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="footer">
+    <div class="container">© {% now "Y" %} TechLogix S.A. · Distribuidora de tecnología · Punta Arenas, Chile</div>
+  </footer>
+</body>
+</html>
